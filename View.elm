@@ -7,12 +7,12 @@ import Styles exposing (..)
 import Css
 import Html.Events exposing (onClick)
 import Model exposing (..)
-import List.Nonempty exposing (Nonempty)
 import CellPatterns exposing (..)
 import Region exposing (..)
 import List.Extra exposing (find)
 import Update exposing (..)
 import Array
+import Cons
 
 
 cellView : Css.Color -> Cell -> Html Msg
@@ -35,7 +35,7 @@ cellsView cells =
             getColor cells
 
         tableCell cell =
-            td [] [ (cellView (getCellColor cell) cell) ]
+            td [] [ cellView (getCellColor cell) cell ]
 
         rowView row =
             tr [] (List.map tableCell row)
@@ -84,7 +84,7 @@ getColor cells =
             regionsColors
                 |> find
                     (\( region, color ) ->
-                        List.Nonempty.any (\regCell -> regCell == cell) region
+                        Cons.any (\regCell -> regCell == cell) region
                     )
                 |> Maybe.map (\( _, color ) -> color)
 

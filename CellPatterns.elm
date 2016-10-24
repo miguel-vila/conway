@@ -1,57 +1,94 @@
 module CellPatterns exposing (..)
 
 import Css exposing (..)
-import List.Nonempty
 import List.Extra exposing (find)
 import Region exposing (..)
+import Debug
+import Cons exposing (Cons)
+
+
+type alias Template =
+    Cons ( Int, Int )
 
 
 type alias Pattern =
-    List ( Int, Int )
+    Cons Template
 
 
-squarePattern : Pattern
-squarePattern =
-    [ ( 0, 0 ), ( 0, 1 ), ( 1, 0 ), ( 1, 1 ) ]
+fromRotated : Template -> Pattern
+fromRotated base =
+    Cons.cons base [ rotateClockwise base ]
+
+
+square : Pattern
+square =
+    Cons.singleton <| Cons.cons ( 0, 0 ) [ ( 0, 1 ), ( 1, 0 ), ( 1, 1 ) ]
 
 
 singleDot : Pattern
 singleDot =
-    [ ( 0, 0 ) ]
+    Cons.singleton (Cons.singleton ( 0, 0 ))
 
 
-horizontalLine : Pattern
-horizontalLine =
-    [ ( 0, 0 ), ( 0, 1 ), ( 0, 2 ) ]
-
-
-verticalLine : Pattern
-verticalLine =
-    [ ( 0, 0 ), ( 1, 0 ), ( 2, 0 ) ]
+line : Pattern
+line =
+    fromRotated <| Cons.cons ( 0, 0 ) [ ( 0, 1 ), ( 0, 2 ) ]
 
 
 beehive : Pattern
 beehive =
-    [ ( 1, 0 ), ( 0, 1 ), ( 2, 1 ), ( 0, 2 ), ( 2, 2 ), ( 1, 3 ) ]
+    fromRotated <| Cons.cons ( 0, 1 ) [ ( 0, 2 ), ( 1, 0 ), ( 1, 3 ), ( 2, 1 ), ( 2, 2 ) ]
 
 
 boat : Pattern
 boat =
-    [ ( 0, 0 ), ( 0, 1 ), ( 1, 0 ), ( 1, 2 ), ( 2, 1 ) ]
+    fromRotated <| Cons.cons ( 0, 0 ) [ ( 0, 1 ), ( 1, 0 ), ( 1, 2 ), ( 2, 1 ) ]
 
 
-hasPattern : Pattern -> Region -> Bool
-hasPattern pattern region =
+compare : ( Int, Int ) -> ( Int, Int ) -> Order
+compare ( x1, y1 ) ( x2, y2 ) =
+    if x1 == x2 then
+        if y1 == y2 then
+            EQ
+        else if y1 < y2 then
+            LT
+        else
+            GT
+    else if x1 < x2 then
+        LT
+    else
+        GT
+
+
+rotateClockwise : Cons ( Int, Int ) -> Cons ( Int, Int )
+rotateClockwise pattern =
     let
-        c0 =
-            List.Nonempty.head region
+        maxX =
+            pattern |> Cons.map fst |> Cons.maximum
+    in
+        pattern
+            |> Cons.map (\( x, y ) -> ( y, maxX - x ))
+            |> Cons.sortWith compare
+
+
+matchesPattern : Pattern -> Region -> Bool
+matchesPattern pattern region =
+    let
+        minx =
+            region
+                |> Cons.map .x
+                |> Cons.minimum
+
+        miny =
+            region
+                |> Cons.map .y
+                |> Cons.minimum
 
         normalized =
             region
-                |> List.Nonempty.map (\{ x, y } -> ( x - c0.x, y - c0.y ))
-                |> List.Nonempty.toList
+                |> Cons.map (\{ x, y } -> ( x - minx, y - miny ))
     in
-        pattern == normalized
+        Cons.any (\p -> p == normalized) pattern
 
 
 (=>) =
@@ -60,18 +97,17 @@ hasPattern pattern region =
 
 patternsAndColors : List ( Pattern, Color )
 patternsAndColors =
-    [ squarePattern => hex "d97e00"
+    [ beehive => hex "817700"
+    , square => hex "d97e00"
     , singleDot => hex "ff65a6"
-    , horizontalLine => hex "38c447"
-    , verticalLine => hex "00b487"
-    , beehive => hex "817700"
+    , line => hex "38c447"
     , boat => hex "b88c64"
     ]
 
 
 getRegionColor : Region -> Maybe Color
 getRegionColor region =
-    find (\( pattern, _ ) -> hasPattern pattern region) patternsAndColors
+    find (\( pattern, _ ) -> matchesPattern pattern region) patternsAndColors
         |> Maybe.map (\( _, color ) -> color)
 
 

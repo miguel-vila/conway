@@ -2,7 +2,7 @@ module Region exposing (..)
 
 import Model exposing (..)
 import Array exposing (Array)
-import List.Nonempty exposing (Nonempty)
+import Cons exposing (Cons)
 
 
 type alias Visited =
@@ -10,7 +10,7 @@ type alias Visited =
 
 
 type alias Region =
-    Nonempty Cell
+    Cons Cell
 
 
 getCellRegion : Visited -> Cells -> Cell -> ( Visited, List Cell )
@@ -94,7 +94,7 @@ getRegions cells =
                                 getCellRegion visited cells cell
 
                             regionAsNonempty =
-                                List.Nonempty.fromList (List.sortWith compareCell region)
+                                Cons.fromList (List.sortWith compareCell region)
 
                             newRegions =
                                 regionAsNonempty |> Maybe.map (\region -> region :: regions) |> Maybe.withDefault regions
