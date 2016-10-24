@@ -15,9 +15,27 @@ type alias Pattern =
     Cons Template
 
 
-fromRotated : Template -> Pattern
-fromRotated base =
+rotatedClosewiseOnce : Template -> Pattern
+rotatedClosewiseOnce base =
     Cons.cons base [ rotateClockwise base ]
+
+
+allRotations : Template -> Pattern
+allRotations base =
+    let
+        rotations =
+            Cons.cons rotateClockwise (List.repeat 2 rotateClockwise)
+    in
+        Cons.foldl
+            (\rotate templates ->
+                let
+                    newTemplate =
+                        rotate (Cons.head templates)
+                in
+                    Cons.cons newTemplate (Cons.toList templates)
+            )
+            (Cons.singleton base)
+            rotations
 
 
 square : Pattern
@@ -30,19 +48,72 @@ singleDot =
     Cons.singleton (Cons.singleton ( 0, 0 ))
 
 
+pair : Pattern
+pair =
+    rotatedClosewiseOnce (Cons.cons ( 0, 0 ) [ ( 0, 1 ) ])
+
+
 line : Pattern
 line =
-    fromRotated <| Cons.cons ( 0, 0 ) [ ( 0, 1 ), ( 0, 2 ) ]
+    rotatedClosewiseOnce <| Cons.cons ( 0, 0 ) [ ( 0, 1 ), ( 0, 2 ) ]
 
 
 beehive : Pattern
 beehive =
-    fromRotated <| Cons.cons ( 0, 1 ) [ ( 0, 2 ), ( 1, 0 ), ( 1, 3 ), ( 2, 1 ), ( 2, 2 ) ]
+    rotatedClosewiseOnce <| Cons.cons ( 0, 1 ) [ ( 0, 2 ), ( 1, 0 ), ( 1, 3 ), ( 2, 1 ), ( 2, 2 ) ]
 
 
 boat : Pattern
 boat =
-    fromRotated <| Cons.cons ( 0, 0 ) [ ( 0, 1 ), ( 1, 0 ), ( 1, 2 ), ( 2, 1 ) ]
+    allRotations <| Cons.cons ( 0, 0 ) [ ( 0, 1 ), ( 1, 0 ), ( 1, 2 ), ( 2, 1 ) ]
+
+
+loaf : Pattern
+loaf =
+    allRotations <| Cons.cons ( 0, 1 ) [ ( 0, 2 ), ( 1, 0 ), ( 1, 3 ), ( 2, 1 ), ( 2, 3 ), ( 3, 2 ) ]
+
+
+cross : Pattern
+cross =
+    Cons.singleton (Cons.cons ( 0, 1 ) [ ( 1, 0 ), ( 1, 2 ), ( 2, 1 ) ])
+
+
+corner : Pattern
+corner =
+    allRotations <| Cons.cons ( 0, 0 ) [ ( 0, 1 ), ( 1, 0 ) ]
+
+
+toad : Pattern
+toad =
+    let
+        period1 =
+            rotatedClosewiseOnce <| Cons.cons ( 0, 1 ) [ ( 0, 2 ), ( 0, 3 ), ( 1, 0 ), ( 1, 1 ), ( 1, 2 ) ]
+
+        period2 =
+            allRotations <| Cons.cons ( 0, 0 ) [ ( 1, 0 ), ( 2, 1 ) ]
+    in
+        Cons.append period1 period2
+
+
+glider : Pattern
+glider =
+    let
+        g1 =
+            Cons.cons ( 0, 0 ) [ ( 1, 1 ), ( 1, 2 ), ( 2, 0 ), ( 2, 1 ) ]
+
+        g2 =
+            Cons.cons ( 0, 1 ) [ ( 1, 2 ), ( 2, 0 ), ( 2, 1 ), ( 2, 2 ) ]
+
+        g3 =
+            Cons.cons ( 0, 0 ) [ ( 0, 2 ), ( 1, 1 ), ( 1, 2 ), ( 2, 1 ) ]
+
+        g4 =
+            Cons.cons ( 0, 2 ) [ ( 1, 0 ), ( 1, 2 ), ( 2, 1 ), ( 2, 2 ) ]
+
+        gs =
+            Cons.cons g1 [ g2, g3, g4 ]
+    in
+        Cons.concatMap allRotations gs
 
 
 compare : ( Int, Int ) -> ( Int, Int ) -> Order
@@ -95,14 +166,43 @@ matchesPattern pattern region =
     (,)
 
 
+colorPalette : List (Color)
+colorPalette =
+    List.map hex
+        [ "e3342e"
+        , "55b522"
+        , "ac2ab2"
+        , "1f7d00"
+        , "ff83f0"
+        , "d3ca31"
+        , "02a8d0"
+        , "a61012"
+        , "6a9062"
+        , "9d203c"
+        , "5a6500"
+        , "ff8eb1"
+        , "84400a"
+        , "f1bd74"
+        , "8c4954"
+        ]
+
+
 patternsAndColors : List ( Pattern, Color )
 patternsAndColors =
-    [ beehive => hex "817700"
-    , square => hex "d97e00"
-    , singleDot => hex "ff65a6"
-    , line => hex "38c447"
-    , boat => hex "b88c64"
-    ]
+    List.Extra.zip
+        [ beehive
+        , square
+        , singleDot
+        , pair
+        , line
+        , boat
+        , loaf
+        , cross
+        , corner
+        , toad
+        , glider
+        ]
+        colorPalette
 
 
 getRegionColor : Region -> Maybe Color

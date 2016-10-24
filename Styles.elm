@@ -18,7 +18,7 @@ cellStyle color =
 
 
 activeColor =
-    hex "ca5d46"
+    hex "7A7A7A"
 
 
 activeStyles =
@@ -26,7 +26,7 @@ activeStyles =
 
 
 inactiveColor =
-    hex "8277cc"
+    hex "CCCCCC"
 
 
 inactiveStyles =
