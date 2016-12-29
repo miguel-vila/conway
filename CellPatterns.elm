@@ -116,6 +116,21 @@ glider =
         Cons.concatMap allRotations gs
 
 
+starExplosion : Pattern
+starExplosion =
+    let
+        stage1 =
+            Cons.cons ( 0, 2 ) [ ( 0, 3 ), ( 0, 4 ), ( 1, 1 ), ( 1, 5 ), ( 2, 0 ), ( 2, 6 ), ( 3, 1 ), ( 3, 5 ), ( 4, 2 ), ( 4, 3 ), ( 4, 4 ) ]
+
+        stage2 =
+            Cons.cons ( 0, 3 ) [ ( 1, 2 ), ( 1, 3 ), ( 1, 4 ), ( 2, 0 ), ( 2, 1 ), ( 2, 5 ), ( 2, 6 ), ( 3, 1 ), ( 3, 2 ), ( 3, 3 ), ( 3, 4 ), ( 3, 5 ), ( 4, 2 ), ( 4, 3 ), ( 4, 4 ), ( 5, 3 ) ]
+
+        stage3 =
+            Cons.cons ( 0, 3 ) [ ( 0, 4 ), ( 0, 5 ), ( 1, 1 ), ( 1, 5 ), ( 2, 0 ), ( 2, 6 ), ( 3, 0 ), ( 3, 6 ), ( 4, 0 ), ( 4, 6 ), ( 5, 1 ), ( 5, 5 ), ( 6, 2 ), ( 6, 3 ), ( 6, 4 ) ]
+    in
+        Cons.cons stage1 [ stage2, stage3 ]
+
+
 compare : ( Int, Int ) -> ( Int, Int ) -> Order
 compare ( x1, y1 ) ( x2, y2 ) =
     if x1 == x2 then
@@ -201,6 +216,7 @@ patternsAndColors =
         , corner
         , toad
         , glider
+        , starExplosion
         ]
         colorPalette
 
