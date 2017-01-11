@@ -79,7 +79,7 @@ markAsVisited visited cells =
     List.foldl markCellAsVisited visited cells
 
 
-getRegions : Cells -> List (Region)
+getRegions : Cells -> List Region
 getRegions cells =
     let
         initialVisited =
@@ -97,7 +97,9 @@ getRegions cells =
                                 Cons.fromList (List.sortWith compareCell region)
 
                             newRegions =
-                                regionAsNonempty |> Maybe.map (\region -> region :: regions) |> Maybe.withDefault regions
+                                regionAsNonempty
+                                    |> Maybe.map (\region -> region :: regions)
+                                    |> Maybe.withDefault regions
                         in
                             ( visited', newRegions )
                     else
