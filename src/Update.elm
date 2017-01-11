@@ -98,7 +98,7 @@ update msg model =
             { model | runningPeriodical = False } ! []
 
         SetRandomModel randModel ->
-            randModel ! []
+            { randModel | runningPeriodical = model.runningPeriodical } ! []
 
         GenerateRandom ->
             model ! [ generateRandomConfig ]
