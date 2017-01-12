@@ -68,9 +68,9 @@ playPauseButt running =
 buttons : Bool -> Html Msg
 buttons running =
     div [ style [ ( "text-align", "center" ) ] ]
-        [ conwayButton Step "Step!"
+        [ conwayButton Step "One step"
         , playPauseButt running
-        , conwayButton GenerateRandomCells "Generate Random!"
+        , conwayButton GenerateRandomCells "Generate Random"
         , conwayButton Clear "Clear"
         ]
 
