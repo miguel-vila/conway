@@ -1,4 +1,4 @@
-module RandomConway exposing (randomCells)
+module RandomConway exposing (randomGrid)
 
 import Random exposing (Generator)
 import Random.Extra
@@ -20,8 +20,8 @@ randomRow n x =
         |> Random.map Array.fromList
 
 
-randomCells : Int -> Generator Cells
-randomCells n =
+randomGrid : Int -> Generator Grid
+randomGrid n =
     (randomRow n)
         |> List.repeat n
         |> List.indexedMap (|>)

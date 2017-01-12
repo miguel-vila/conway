@@ -28,11 +28,11 @@ centerGridStyle =
     style [ ( "margin", "0 auto" ) ]
 
 
-cellsView : Cells -> Html Msg
-cellsView cells =
+gridView : Grid -> Html Msg
+gridView grid =
     let
         regions =
-            getRegions cells
+            getRegions grid
 
         regionsColors =
             getRegionsColors regions
@@ -47,7 +47,7 @@ cellsView cells =
             tr [] (List.map tableCell row)
 
         tableRows =
-            List.map (Array.toList >> rowView) (Array.toList cells)
+            List.map (Array.toList >> rowView) (Array.toList grid)
     in
         table [ centerGridStyle ] [ tbody [] tableRows ]
 
@@ -79,7 +79,7 @@ buttons running =
     div [ style [ ( "text-align", "center" ) ] ]
         [ conwayButton (not running) Step "One step"
         , playPauseButt running
-        , enabledButton GenerateRandomCells "Generate Random"
+        , enabledButton GenerateRandomGrid "Generate Random"
         , enabledButton Clear "Clear"
         ]
 
@@ -88,7 +88,7 @@ view : Model -> Html Msg
 view model =
     div []
         [ buttons model.runningPeriodical
-        , cellsView model.cells
+        , gridView model.grid
         ]
 
 

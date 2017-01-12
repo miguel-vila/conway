@@ -13,14 +13,14 @@ type alias Region =
     Cons Cell
 
 
-getCellRegion : Visited -> Cells -> Cell -> ( Visited, List Cell )
-getCellRegion initialVisited cells initialCell =
+getCellRegion : Visited -> Grid -> Cell -> ( Visited, List Cell )
+getCellRegion initialVisited grid initialCell =
     let
         initialVisited' =
             markCellAsVisited initialCell initialVisited
 
         nonVisitedNeighbours visited cell =
-            getNeighbours cell cells
+            getNeighbours cell grid
                 |> List.filter (\c -> not <| visitedPreviously visited c)
                 |> List.filter .active
 
@@ -75,12 +75,12 @@ markCellAsVisited { x, y } visited =
 
 
 markAsVisited : Visited -> List Cell -> Visited
-markAsVisited visited cells =
-    List.foldl markCellAsVisited visited cells
+markAsVisited visited grid =
+    List.foldl markCellAsVisited visited grid
 
 
-getRegions : Cells -> List Region
-getRegions cells =
+getRegions : Grid -> List Region
+getRegions grid =
     let
         initialVisited =
             Array.repeat n (Array.repeat n False)
@@ -91,7 +91,7 @@ getRegions cells =
                     if cell.active && not (visitedPreviously visited cell) then
                         let
                             ( visited', region ) =
-                                getCellRegion visited cells cell
+                                getCellRegion visited grid cell
 
                             regionAsNonempty =
                                 Cons.fromList (List.sortWith compareCell region)
@@ -109,6 +109,6 @@ getRegions cells =
                 row
 
         ( _, regions ) =
-            Array.foldl rowRegions ( initialVisited, [] ) cells
+            Array.foldl rowRegions ( initialVisited, [] ) grid
     in
         regions

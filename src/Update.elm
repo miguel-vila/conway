@@ -3,17 +3,17 @@ module Update exposing (..)
 import Model exposing (..)
 import Array exposing (Array)
 import Random
-import RandomConway exposing (randomCells)
+import RandomConway exposing (randomGrid)
 
 
-initialCells : Cells
-initialCells =
+initialGrid : Grid
+initialGrid =
     Array.initialize n (\i -> Array.initialize n (\j -> (Cell False i j)))
 
 
 initialModel : Model
 initialModel =
-    { cells = initialCells
+    { grid = initialGrid
     , runningPeriodical = False
     }
 
@@ -24,20 +24,20 @@ type Msg
     | StepPeriodical
     | Run
     | Stop
-    | GenerateRandomCells
-    | SetRandomCells Cells
+    | GenerateRandomGrid
+    | SetRandomGrid Grid
     | Clear
 
 
 init =
-    ( initialModel, generateRandomCells )
+    ( initialModel, generateRandomGrid )
 
 
-updateCell : Cells -> Cell -> Cell
-updateCell cells cell =
+updateCell : Grid -> Cell -> Cell
+updateCell grid cell =
     let
         neighbours =
-            getNeighbours cell cells
+            getNeighbours cell grid
 
         liveNeighbours =
             List.length <| List.filter .active neighbours
@@ -51,14 +51,14 @@ updateCell cells cell =
         { cell | active = newState }
 
 
-step : Cells -> Cells
-step cells =
-    Array.map (Array.map (updateCell cells)) cells
+step : Grid -> Grid
+step grid =
+    Array.map (Array.map (updateCell grid)) grid
 
 
 executeStep : Model -> Model
 executeStep model =
-    { model | cells = (step model.cells) }
+    { model | grid = (step model.grid) }
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -67,18 +67,18 @@ update msg model =
         Switch { active, x, y } ->
             let
                 rowM =
-                    Array.get x model.cells
+                    Array.get x model.grid
 
                 updatedRowM =
                     Maybe.map (Array.set y (Cell (not active) x y)) rowM
 
-                newCellsM =
-                    Maybe.map (\newRow -> Array.set x newRow model.cells) updatedRowM
+                newGridM =
+                    Maybe.map (\newRow -> Array.set x newRow model.grid) updatedRowM
 
-                newCells =
-                    (Maybe.withDefault model.cells newCellsM)
+                newGrid =
+                    (Maybe.withDefault model.grid newGridM)
             in
-                { model | cells = newCells } ! []
+                { model | grid = newGrid } ! []
 
         Step ->
             executeStep model ! []
@@ -97,16 +97,16 @@ update msg model =
         Stop ->
             { model | runningPeriodical = False } ! []
 
-        GenerateRandomCells ->
-            model ! [ generateRandomCells ]
+        GenerateRandomGrid ->
+            model ! [ generateRandomGrid ]
 
-        SetRandomCells randCells ->
-            { model | cells = randCells } ! []
+        SetRandomGrid randGrid ->
+            { model | grid = randGrid } ! []
 
         Clear ->
             initialModel ! []
 
 
-generateRandomCells : Cmd Msg
-generateRandomCells =
-    Random.generate SetRandomCells (randomCells n)
+generateRandomGrid : Cmd Msg
+generateRandomGrid =
+    Random.generate SetRandomGrid (randomGrid n)

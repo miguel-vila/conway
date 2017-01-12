@@ -18,21 +18,21 @@ type alias Cell =
     }
 
 
-type alias Cells =
+type alias Grid =
     Array (Array Cell)
 
 
 type alias Model =
-    { cells : Cells
+    { grid : Grid
     , runningPeriodical : Bool
     }
 
 
-getCellAt : Cells -> ( Int, Int ) -> Maybe Cell
-getCellAt cells ( x, y ) =
+getCellAt : Grid -> ( Int, Int ) -> Maybe Cell
+getCellAt grid ( x, y ) =
     let
         row =
-            (Array.get x cells)
+            (Array.get x grid)
     in
         Maybe.andThen row (Array.get y)
 
@@ -54,7 +54,7 @@ neighbours { x, y } =
             |> List.filter (\( i, j ) -> x /= i || y /= j)
 
 
-getNeighbours : Cell -> Cells -> List Cell
-getNeighbours cell cells =
+getNeighbours : Cell -> Grid -> List Cell
+getNeighbours cell grid =
     neighbours cell
-        |> List.filterMap (getCellAt cells)
+        |> List.filterMap (getCellAt grid)
