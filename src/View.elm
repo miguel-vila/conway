@@ -2,7 +2,7 @@ module View exposing (view)
 
 import Html exposing (Html, div, td, tr, tbody, table, text, button)
 import Html.App as Html
-import Html.Attributes exposing (style)
+import Html.Attributes exposing (style, disabled)
 import Styles exposing (..)
 import Css
 import Html.Events exposing (onClick)
@@ -52,26 +52,35 @@ cellsView cells =
         table [ centerGridStyle ] [ tbody [] tableRows ]
 
 
-conwayButton : Msg -> String -> Html Msg
-conwayButton msg textString =
-    button [ styles buttonStyle, onClick msg ] [ text textString ]
+conwayButton : Bool -> Msg -> String -> Html Msg
+conwayButton isEnabled msg textString =
+    button
+        [ styles buttonStyle
+        , onClick msg
+        , disabled (not isEnabled)
+        ]
+        [ text textString ]
+
+
+enabledButton =
+    conwayButton True
 
 
 playPauseButt : Bool -> Html Msg
 playPauseButt running =
     if running then
-        conwayButton Stop "⏸"
+        enabledButton Stop "⏸"
     else
-        conwayButton Run "▶️"
+        enabledButton Run "▶️"
 
 
 buttons : Bool -> Html Msg
 buttons running =
     div [ style [ ( "text-align", "center" ) ] ]
-        [ conwayButton Step "One step"
+        [ conwayButton (not running) Step "One step"
         , playPauseButt running
-        , conwayButton GenerateRandomCells "Generate Random"
-        , conwayButton Clear "Clear"
+        , enabledButton GenerateRandomCells "Generate Random"
+        , enabledButton Clear "Clear"
         ]
 
 
