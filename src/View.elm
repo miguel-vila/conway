@@ -24,8 +24,12 @@ cellView color cell =
         []
 
 
-centerCssAttrs =
-    [ ( "margin", "0 auto" ) ]
+buttonStyle =
+    style [ ( "margin", "5px" ) ]
+
+
+centerGridStyle =
+    style [ ( "margin", "0 auto" ) ]
 
 
 cellsView : Cells -> Html Msg
@@ -49,27 +53,32 @@ cellsView cells =
         tableRows =
             List.map (Array.toList >> rowView) (Array.toList cells)
     in
-        table [ style centerCssAttrs ] [ tbody [] tableRows ]
+        table [ centerGridStyle ] [ tbody [] tableRows ]
 
 
 playPauseButt : Bool -> Html Msg
 playPauseButt running =
     if running then
-        button [ onClick Stop ] [ text "⏸" ]
+        button [ buttonStyle, onClick Stop ] [ text "⏸" ]
     else
-        button [ onClick Run ] [ text "▶️" ]
+        button [ buttonStyle, onClick Run ] [ text "▶️" ]
+
+
+buttons : Bool -> Html Msg
+buttons running =
+    div [ style [ ( "text-align", "center" ) ] ]
+        [ button [ buttonStyle, onClick Step ] [ text "Step!" ]
+        , playPauseButt running
+        , button [ buttonStyle, onClick GenerateRandomCells ] [ text "Generate Random!" ]
+        , button [ buttonStyle, onClick Clear ] [ text "Clear" ]
+        ]
 
 
 view : Model -> Html Msg
 view model =
     div []
-        [ cellsView model.cells
-        , div [ style centerCssAttrs ]
-            [ button [ onClick Step ] [ text "Step!" ]
-            , playPauseButt model.runningPeriodical
-            , button [ onClick GenerateRandomCells ] [ text "Generate Random!" ]
-            , button [ onClick Clear ] [ text "Clear" ]
-            ]
+        [ buttons model.runningPeriodical
+        , cellsView model.cells
         ]
 
 
