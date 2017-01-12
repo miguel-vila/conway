@@ -31,8 +31,14 @@ centerCssAttrs =
 cellsView : Cells -> Html Msg
 cellsView cells =
     let
+        regions =
+            getRegions cells
+
+        regionsColors =
+            getRegionsColors regions
+
         getCellColor =
-            getColor cells
+            getColor regionsColors
 
         tableCell cell =
             td [] [ cellView (getCellColor cell) cell ]
@@ -61,7 +67,7 @@ view model =
         , div [ style centerCssAttrs ]
             [ button [ onClick Step ] [ text "Step!" ]
             , playPauseButt model.runningPeriodical
-            , button [ onClick GenerateRandom ] [ text "Generate Random!" ]
+            , button [ onClick GenerateRandomCells ] [ text "Generate Random!" ]
             , button [ onClick Clear ] [ text "Clear" ]
             ]
         ]
@@ -71,21 +77,9 @@ styles =
     Css.asPairs >> Html.Attributes.style
 
 
-
-{-
-   This may be inefficient?
--}
-
-
-getColor : Cells -> Cell -> Css.Color
-getColor cells =
+getColor : List ( Region, Css.Color ) -> Cell -> Css.Color
+getColor regionsColors =
     let
-        regions =
-            getRegions cells
-
-        regionsColors =
-            getRegionsColors regions
-
         colorByRegion : Cell -> Maybe Css.Color
         colorByRegion cell =
             regionsColors
