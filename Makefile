@@ -5,7 +5,7 @@ ELM_MAKE = elm-make
 default: $(COMPILED)
 
 $(COMPILED): $(SOURCES)
-	$(ELM_MAKE) src/Conway.elm --output=$@
+	$(ELM_MAKE) src/Conway.elm --output=$@ --yes
 
 clean:
 	rm $(COMPILED)
