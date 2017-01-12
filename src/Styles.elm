@@ -14,6 +14,7 @@ cellStyle color =
     , float left
     , width (px cellSize)
     , height (px cellSize)
+    , cursor pointer
     ]
 
 
@@ -31,3 +32,7 @@ inactiveColor =
 
 inactiveStyles =
     cellStyle inactiveColor
+
+
+buttonStyle =
+    [ margin (px 5) ]

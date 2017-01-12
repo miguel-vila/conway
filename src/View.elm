@@ -24,10 +24,6 @@ cellView color cell =
         []
 
 
-buttonStyle =
-    style [ ( "margin", "5px" ) ]
-
-
 centerGridStyle =
     style [ ( "margin", "0 auto" ) ]
 
@@ -56,21 +52,26 @@ cellsView cells =
         table [ centerGridStyle ] [ tbody [] tableRows ]
 
 
+conwayButton : Msg -> String -> Html Msg
+conwayButton msg textString =
+    button [ styles buttonStyle, onClick msg ] [ text textString ]
+
+
 playPauseButt : Bool -> Html Msg
 playPauseButt running =
     if running then
-        button [ buttonStyle, onClick Stop ] [ text "⏸" ]
+        conwayButton Stop "⏸"
     else
-        button [ buttonStyle, onClick Run ] [ text "▶️" ]
+        conwayButton Run "▶️"
 
 
 buttons : Bool -> Html Msg
 buttons running =
     div [ style [ ( "text-align", "center" ) ] ]
-        [ button [ buttonStyle, onClick Step ] [ text "Step!" ]
+        [ conwayButton Step "Step!"
         , playPauseButt running
-        , button [ buttonStyle, onClick GenerateRandomCells ] [ text "Generate Random!" ]
-        , button [ buttonStyle, onClick Clear ] [ text "Clear" ]
+        , conwayButton GenerateRandomCells "Generate Random!"
+        , conwayButton Clear "Clear"
         ]
 
 
