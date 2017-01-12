@@ -46,14 +46,21 @@ cellsView cells =
         table [ style centerCssAttrs ] [ tbody [] tableRows ]
 
 
+playPauseButt : Bool -> Html Msg
+playPauseButt running =
+    if running then
+        button [ onClick Stop ] [ text "⏸" ]
+    else
+        button [ onClick Run ] [ text "▶️" ]
+
+
 view : Model -> Html Msg
 view model =
     div []
         [ cellsView model.cells
         , div [ style centerCssAttrs ]
             [ button [ onClick Step ] [ text "Step!" ]
-            , button [ onClick Run ] [ text "Run!" ]
-            , button [ onClick Stop ] [ text "Stop!" ]
+            , playPauseButt model.runningPeriodical
             , button [ onClick GenerateRandom ] [ text "Generate Random!" ]
             , button [ onClick Clear ] [ text "Clear" ]
             ]

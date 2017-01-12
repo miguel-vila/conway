@@ -3,7 +3,7 @@ module Update exposing (..)
 import Model exposing (..)
 import Array exposing (Array)
 import Random
-import RandomConway exposing (randomModel)
+import RandomConway exposing (randomCells)
 
 
 initialCells : Cells
@@ -24,13 +24,13 @@ type Msg
     | StepPeriodical
     | Run
     | Stop
-    | GenerateRandom
-    | SetRandomModel Model
+    | GenerateRandomCells
+    | SetRandomCells Cells
     | Clear
 
 
 init =
-    ( initialModel, generateRandomConfig )
+    ( initialModel, generateRandomCells )
 
 
 updateCell : Cells -> Cell -> Cell
@@ -40,7 +40,7 @@ updateCell cells cell =
             getNeighbours cell cells
 
         liveNeighbours =
-            List.length <| List.filter (.active) neighbours
+            List.length <| List.filter .active neighbours
 
         newState =
             if cell.active then
@@ -97,16 +97,16 @@ update msg model =
         Stop ->
             { model | runningPeriodical = False } ! []
 
-        SetRandomModel randModel ->
-            { randModel | runningPeriodical = model.runningPeriodical } ! []
+        GenerateRandomCells ->
+            model ! [ generateRandomCells ]
 
-        GenerateRandom ->
-            model ! [ generateRandomConfig ]
+        SetRandomCells randCells ->
+            { model | cells = randCells } ! []
 
         Clear ->
             initialModel ! []
 
 
-generateRandomConfig : Cmd Msg
-generateRandomConfig =
-    Random.generate SetRandomModel (randomModel n)
+generateRandomCells : Cmd Msg
+generateRandomCells =
+    Random.generate SetRandomCells (randomCells n)
