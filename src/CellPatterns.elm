@@ -15,8 +15,8 @@ type alias Pattern =
     Cons Template
 
 
-rotatedClosewiseOnce : Template -> Pattern
-rotatedClosewiseOnce base =
+rotatedClockwiseOnce : Template -> Pattern
+rotatedClockwiseOnce base =
     Cons.cons base [ rotateClockwise base ]
 
 
@@ -50,17 +50,17 @@ singleDot =
 
 pair : Pattern
 pair =
-    rotatedClosewiseOnce (Cons.cons ( 0, 0 ) [ ( 0, 1 ) ])
+    rotatedClockwiseOnce (Cons.cons ( 0, 0 ) [ ( 0, 1 ) ])
 
 
 line : Pattern
 line =
-    rotatedClosewiseOnce <| Cons.cons ( 0, 0 ) [ ( 0, 1 ), ( 0, 2 ) ]
+    rotatedClockwiseOnce <| Cons.cons ( 0, 0 ) [ ( 0, 1 ), ( 0, 2 ) ]
 
 
 beehive : Pattern
 beehive =
-    rotatedClosewiseOnce <| Cons.cons ( 0, 1 ) [ ( 0, 2 ), ( 1, 0 ), ( 1, 3 ), ( 2, 1 ), ( 2, 2 ) ]
+    rotatedClockwiseOnce <| Cons.cons ( 0, 1 ) [ ( 0, 2 ), ( 1, 0 ), ( 1, 3 ), ( 2, 1 ), ( 2, 2 ) ]
 
 
 boat : Pattern
@@ -87,7 +87,7 @@ toad : Pattern
 toad =
     let
         period1 =
-            rotatedClosewiseOnce <| Cons.cons ( 0, 1 ) [ ( 0, 2 ), ( 0, 3 ), ( 1, 0 ), ( 1, 1 ), ( 1, 2 ) ]
+            rotatedClockwiseOnce <| Cons.cons ( 0, 1 ) [ ( 0, 2 ), ( 0, 3 ), ( 1, 0 ), ( 1, 1 ), ( 1, 2 ) ]
 
         period2 =
             allRotations <| Cons.cons ( 0, 0 ) [ ( 1, 0 ), ( 2, 1 ) ]
@@ -181,7 +181,7 @@ matchesPattern pattern region =
     (,)
 
 
-colorPalette : List (Color)
+colorPalette : List Color
 colorPalette =
     List.map hex
         [ "e3342e"
